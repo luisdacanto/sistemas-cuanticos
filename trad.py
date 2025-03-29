@@ -18,15 +18,18 @@ def shift(t):
         sparse.kron(backward, np.array([[0, 0], [0, 1]]))
     )
 def evolution_step(t):
-    return shift(t)@coin(t)
-
-#Cálculos
-psi=np.pad(np.array([1, 1]) / np.sqrt(2),2) #estado inicial
+    return shift(t) @ coin(t)
 
 #Caminata Cuántica
+psi=np.kron(np.array([0,1,0]),np.array([1,0]))
 
-for t in range(7):
-    psi=evolution_step(t).dot(psi)
-    psi=np.pad(psi,(2,2))
+def Psi(t):
+    for i in range (1,t+1):
+        psi=evolution_step(i) @ psi
+        psi=np.pad(psi,(2,2))
+    return psi
 
-print(psi)
+#Valor esperado de la posición
+
+def x(t):
+    return 
