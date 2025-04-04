@@ -19,14 +19,12 @@ def shift(t):
         sparse.kron(backward, np.array([[0, 0], [0, 1]]))
     )
 def evolution_step(t):
-    if t==0:
-        return np.eye(6)
     return shift(t) @ coin(t)
 
 #Caminata Cuántica
-    #psi=np.kron(np.array([0,1,0]),np.array([1,-1j])/np.sqrt(2))
+    #psi=np.kron(np.array([0,1,0]),np.array([1,-1j])/np.sqrt(2)) estado simétrico
 def Psi(t):
-    psi=np.kron(np.array([0,1,0]),np.array([1,0j])) #estado inicial
+    psi=np.kron(np.array([0,1,0]),np.array([1,-1j])/np.sqrt(2)) #estado inicial
     for i in range (1,t+1):
         psi=evolution_step(i) @ psi
         psi=np.pad(psi,(2,2))
@@ -64,7 +62,7 @@ def plot_prob(t):
     plt.show()
 plot_prob(100)
 
-#Parámnetros de nuestra caminata
+#Parámetros de nuestra caminata
 steps=50
 longw=np.arange(0,steps)
 
