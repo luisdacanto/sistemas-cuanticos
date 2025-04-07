@@ -1,14 +1,14 @@
 from scipy import sparse
 import numpy as np
 import matplotlib.pyplot as plt
+from numpy import random
 
 #Definiciones
 
+L= 64  #Largo de nuestro ciclo
+
 H = (1/np.sqrt(2)) * np.array([[1, 1], [1, -1]])
 H_sparse = sparse.csr_matrix(H)
-
-#Largo de nuestro ciclo
-L= 64
 
 def coin(L): 
      return sparse.kron(sparse.identity(L),H_sparse)
@@ -34,7 +34,7 @@ def shift(L):
 def evolution_step(L):
      return shift(L)@ coin(L)
 
-def Psi(t):
+def Psi(t): 
     inicial=np.zeros(L)
     inicial[0]=1
     psi=np.kron(inicial,np.array([1,0j])) #estado inicial
@@ -42,11 +42,21 @@ def Psi(t):
         psi=evolution_step(L) @ psi
     return psi
 
+#Compuertas Switch
+def S(vec, i):
+    vec = vec.copy()
+    vec[i], vec[i + 1] = vec[i + 1], vec[i]
+    return vec
+
+def S_Psi(t):
+    return S(Psi(t), random.randint(L - 1)) 
+
 #Probabilidades 
 def prob(t):
     c0=Psi(t)[0::2]
     c1=Psi(t)[1::2]
     return np.abs(c0)**2+ np.abs(c1)**2
+
 #Distribución de Probabilidad
 def plot_prob(t):
     pos = np.arange(L)
@@ -59,4 +69,5 @@ def plot_prob(t):
     plt.grid(True)
     plt.tight_layout()
     plt.show()
-plot_prob(100)
+plot_prob(60)
+
