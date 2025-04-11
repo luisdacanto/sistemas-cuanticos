@@ -51,23 +51,38 @@ def S(vec, i):
 def S_Psi(t):
     return S(Psi(t), random.randint(L - 1)) 
 
+#prueba=np.array([0,1,2,3,4])
+
 #Probabilidades 
-def prob(t):
+def prob(t,P):
     c0=Psi(t)[0::2]
     c1=Psi(t)[1::2]
-    return np.abs(c0)**2+ np.abs(c1)**2
+    p_original = np.abs(c0)**2 + np.abs(c1)**2
+
+    Sc0=S_Psi(t)[0::2]
+    Sc1=S_Psi(t)[1::2]
+    p_swapped = S(p_original,random.randint(L-1))
+
+    return (1-P)*p_original+(P)*p_swapped
 
 #Distribución de Probabilidad
-def plot_prob(t):
+def plot_prob(t, P):
     pos = np.arange(L)
-    p = prob(t)
+    p = prob(t, P)
+    plt.plot(pos, p, label=f"P = {P:.1f}")
+
+# Loop over time steps and randomness values
+for t in [30, 60, 120]:
     plt.figure(figsize=(8, 4))
-    plt.plot(pos, p, color='blue') 
-    plt.title(f"Quantum Walk Probability Distribution at t = {t}")
+    for P in [0, 0.5, 1]:
+        plot_prob(t, P)
+    
     plt.xlabel("Position")
     plt.ylabel("Probability")
+    plt.title(f"Quantum Walk Distribution at t = {t} for Various P")
     plt.grid(True)
+    plt.legend()
     plt.tight_layout()
     plt.show()
-plot_prob(60)
+
 

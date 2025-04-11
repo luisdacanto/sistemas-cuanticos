@@ -36,6 +36,8 @@ def prob(t):
     c0=Psi(t)[0::2]
     c1=Psi(t)[1::2]
     return np.abs(c0)**2+ np.abs(c1)**2
+
+
 def positions(t):
     N=len(prob(t))
     return np.arange(-N//2,N//2)
