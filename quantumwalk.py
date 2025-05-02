@@ -3,8 +3,8 @@ import numpy as np
 import time
 
 start_time=time.time()
-n=200
-line=hw.Line(n)
+n=4
+line=hw.Cycle(n)
 
 
 qw=hw.Coined(line, coin= "hadamard")

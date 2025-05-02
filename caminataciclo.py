@@ -5,7 +5,7 @@ from numpy import random
 
 #Definiciones
 
-L= 64  #Largo de nuestro ciclo
+L= 4  #Largo de nuestro ciclo
 
 H = (1/np.sqrt(2)) * np.array([[1, 1], [1, -1]])
 H_sparse = sparse.csr_matrix(H)
@@ -36,7 +36,7 @@ def evolution_step(L):
 
 def Psi(t): 
     inicial=np.zeros(L)
-    inicial[0]=1
+    inicial[0]=0
     psi=np.kron(inicial,np.array([1,0j])) #estado inicial
     for i in range (1,t+1):
         psi=evolution_step(L) @ psi
@@ -72,9 +72,9 @@ def plot_prob(t, P):
     plt.plot(pos, p, label=f"P = {P:.1f}")
 
 # Loop over time steps and randomness values
-for t in [30, 50, 120]:
+for t in [1, 10, 20,50]:
     plt.figure(figsize=(8, 4))
-    for P in [0, 0.5, 1]:
+    for P in [0]:
         plot_prob(t, P)
     
     plt.xlabel("Position")
