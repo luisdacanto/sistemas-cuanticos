@@ -36,7 +36,7 @@ def evolution_step(L):
 
 def Psi(t): 
     inicial=np.zeros(L)
-    inicial[0]=0
+    inicial[0]=1
     psi=np.kron(inicial,np.array([1,0j])) #estado inicial
     for i in range (1,t+1):
         psi=evolution_step(L) @ psi
@@ -69,12 +69,12 @@ def prob(t,P):
 def plot_prob(t, P):
     pos = np.arange(L)
     p = prob(t, P)
-    plt.plot(pos, p, label=f"P = {P:.1f}")
+    plt.plot(pos, p, label=f"P = {P:.2f}")
 
 # Loop over time steps and randomness values
-for t in [1, 10, 20,50]:
+for t in [1, 10, 20]:
     plt.figure(figsize=(8, 4))
-    for P in [0]:
+    for P in [0,0.5,1]:
         plot_prob(t, P)
     
     plt.xlabel("Position")
