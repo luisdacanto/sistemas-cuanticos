@@ -5,7 +5,7 @@ from numpy import random
 
 #Definiciones
 
-L= 4  #Largo de nuestro ciclo
+L= 64  #Largo de nuestro ciclo
 
 H = (1/np.sqrt(2)) * np.array([[1, 1], [1, -1]])
 H_sparse = sparse.csr_matrix(H)
@@ -14,22 +14,12 @@ def coin(L):
      return sparse.kron(sparse.identity(L),H_sparse)
 
 def shift(L):
-    forward = np.pad(np.eye(L-1), ((1, 0), (0, 1)))  # paso adelante
-    backward = np.pad(np.eye(L-1), ((0, 1), (1, 0)))  # paso atras
+    forward = np.roll(np.eye(L),1,1)  # paso adelante
+    backward = np.roll(np.eye(L),-1,1)  # paso atras
     
-    ket_0 = np.zeros(L)
-    ket_0[0]=1
-
-    ket_L = np.zeros(L)
-    ket_L[L-1]=1
-
-    zero_to_L=sparse.kron(np.outer(ket_0,ket_L), np.array([[1, 0], [0, 0]]))
-    L_to_zero=sparse.kron(np.outer(ket_L,ket_0),np.array([[0, 0], [0, 1]]))
     return (
         sparse.kron(forward, np.array([[1, 0], [0, 0]])) +
-        sparse.kron(backward, np.array([[0, 0], [0, 1]])) +
-        zero_to_L + L_to_zero
-    )
+        sparse.kron(backward, np.array([[0, 0], [0, 1]])))
 
 def evolution_step(L):
      return shift(L)@ coin(L)
@@ -72,7 +62,7 @@ def plot_prob(t, P):
     plt.plot(pos, p, label=f"P = {P:.2f}")
 
 # Loop over time steps and randomness values
-for t in [1, 10, 20]:
+for t in [1,30,60]:
     plt.figure(figsize=(8, 4))
     for P in [0,0.5,1]:
         plot_prob(t, P)

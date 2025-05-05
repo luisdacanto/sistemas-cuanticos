@@ -70,7 +70,7 @@ def plot_prob(t, P):
     plt.plot(pos, p, label=f"P = {P:.1f}")
 
 # Loop over time steps and randomness values
-for t in [1, 10, 20,50]:
+for t in [1,30,60]:
     plt.figure(figsize=(8, 4))
     for P in [0,0.5,1]:
         plot_prob(t, P)
