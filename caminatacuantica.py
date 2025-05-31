@@ -56,13 +56,13 @@ def plot_prob(t):
     p = prob(t)
     plt.figure(figsize=(8, 4))
     plt.plot(pos, p, color='blue') 
-    plt.title(f"Quantum Walk Probability Distribution at t = {t}")
-    plt.xlabel("Position")
-    plt.ylabel("Probability")
+    plt.title(f"Distribución de Probabilidad de la Caminata al Tiempo t = {t}")
+    plt.xlabel("Posición")
+    plt.ylabel("Probabilidad")
     plt.grid(True)
     plt.tight_layout()
     plt.show()
-plot_prob(100)
+plot_prob(200)
 
 #Parámetros de nuestra caminata
 steps=50

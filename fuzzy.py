@@ -168,7 +168,33 @@ def plot_prob(t: int, P: float):
 # —————————————————————————
 # 4) Ejemplo de uso
 # —————————————————————————
-if __name__ == "__main__":
+#if __name__ == "__main__":
     # graficar después de 20 pasos con mezcla P=0.5
-    plot_prob(20, 1)
-    plt.show()
+
+
+def Switch(v):
+    #Prueba de Dirichlet
+    alpha=[1,1,1,1,1,1]
+    muestra=np.random.dirichlet(alpha)  
+    for i in range(L-1):
+        x=0
+        x=x+muestra[i]*np.array(permutar_vector(probs, i, i+1, n_q), dtype=float)
+    return x
+
+def Switch(v):
+    L = len(v)
+    if L < 2:
+        raise ValueError("v debe tener al menos 2 entradas")
+    
+    # 1) Muestreamos L-1 pesos en el simplejo (Dirichlet(1,...,1))
+    alpha = np.ones(L - 1)
+    pesos = np.random.dirichlet(alpha)  # vector de tamaño L-1, suma 1
+    
+    # 2) Construimos la suma ponderada de permutaciones
+    x = np.zeros_like(v, dtype=float)
+    for i, w in enumerate(pesos):
+        vp = permutar_vector(v, i, i+1)
+        x += w * vp
+    
+    # Por construcción, x.sum() == v.sum() == 1
+    return x

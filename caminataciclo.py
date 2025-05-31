@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 from numpy import random
 
 #Definiciones
-
-L= 64  #Largo de nuestro ciclo
+n_q=6 #número de qubits
+L=2**n_q #Largo de nuestro ciclo
 
 H = (1/np.sqrt(2)) * np.array([[1, 1], [1, -1]])
 H_sparse = sparse.csr_matrix(H)
@@ -33,15 +33,22 @@ def Psi(t):
     return psi
 
 #Compuertas Switch
-def S(vec, i):
-    vec = vec.copy()
-    vec[i], vec[i + 1] = vec[i + 1], vec[i]
-    return vec
+"Swap de qubits"
+def permutar_vector(vector: list, i: int, j: int, width: int) -> list: 
+    #Nos da un nuevo vector bajo la permutación de los (qu)bits i y j
+    def swap_bits(n: int) -> int:
+       #función interna que nos da la imagen de un número "n" bajo la permutación de bits
+        pos_i = width - 1 - i
+        pos_j = width - 1 - j
+        b_i = (n >> pos_i) & 1
+        b_j = (n >> pos_j) & 1
+        if b_i == b_j:
+            return n
+        mask = (1 << pos_i) | (1 << pos_j)
+        return n ^ mask
 
-def S_Psi(t):
-    return S(Psi(t), random.randint(L - 1)) 
-
-#prueba=np.array([0,1,2,3,4])
+    order = [swap_bits(n) for n in range(2**width)]  # Genera el orden de permutación
+    return [vector[index] for index in order]
 
 #Probabilidades 
 def prob(t,P):
@@ -49,11 +56,12 @@ def prob(t,P):
     c1=Psi(t)[1::2]
     p_original = np.abs(c0)**2 + np.abs(c1)**2
 
-    Sc0=S_Psi(t)[0::2]
-    Sc1=S_Psi(t)[1::2]
-    p_swapped = S(p_original,random.randint(L-1))
+    psi_sw = np.array(permutar_vector(p_original, 0, 1, n_q), dtype=complex)
+    c0_sw = psi_sw[0::2]
+    c1_sw = psi_sw[1::2]
+    probs_sw = np.array(permutar_vector(p_original, 4, 5, n_q), dtype=float) #np.abs(c0_sw)**2 + np.abs(c1_sw)**2
 
-    return (1-P)*p_original+(P)*p_swapped
+    return (1-P)*p_original+(P)*probs_sw
 
 #Distribución de Probabilidad
 def plot_prob(t, P):
@@ -62,17 +70,19 @@ def plot_prob(t, P):
     plt.plot(pos, p, label=f"P = {P:.2f}")
 
 # Loop over time steps and randomness values
-for t in [1,30,60]:
+for t in [0,1,30,60,100]:
     plt.figure(figsize=(8, 4))
     for P in [0,0.5,1]:
         plot_prob(t, P)
     
-    plt.xlabel("Position")
-    plt.ylabel("Probability")
-    plt.title(f"Quantum Walk Distribution at t = {t} for Various P")
+    plt.xlabel("Posición")
+    plt.ylabel("Probabilidad")
+    plt.title(f"Distribución de Probilidad de la Caminata Cuántica al tiempo t = {t} para varias P")
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
     plt.show()
+
+
 
 

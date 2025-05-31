@@ -39,7 +39,8 @@ def permutar_vector(vector: list, i: int, j: int, width: int) -> list:
 
 def Psi(t): #evolución temporal
     p_i=np.zeros(L,dtype=complex)
-    p_i[0]=1 #posición inicial |0>
+    p_i[0]=1/np.sqrt(2)
+    p_i[L//2]=1/np.sqrt(2) #posición inicial |1>
     c_i=np.array([1,0j]) #estado moneda
     psi=np.kron(p_i,c_i) #estado inicial
     for _ in range (1,t+1):
@@ -58,27 +59,61 @@ def prob(t: int, P: float) -> np.ndarray: #Distribución de probabilidad
     psi_sw = np.array(permutar_vector(psi, 0, 1, n_q+1), dtype=complex)
     c0_sw = psi_sw[0::2]
     c1_sw = psi_sw[1::2]
-    probs_sw = np.array(permutar_vector(probs, 0, 5, n_q), dtype=float) #np.abs(c0_sw)**2 + np.abs(c1_sw)**2
+    probs_sw = np.array(permutar_vector(probs, 4, 5, n_q), dtype=float) #np.abs(c0_sw)**2 + np.abs(c1_sw)**2
 
     return (1.0 - P)*probs + P*probs_sw
 
-"Gráficas"
-#Distribución de Probabilidad
-def plot_prob(t, P):
-    pos = np.arange(L)
-    p = prob(t, P)
-    plt.plot(pos, p, label=f"P = {P:.1f}")
+def Switch(v,pesos): #Canal Switch
+    alpha = [1,1,1,1,1,1]
+    Pesos = np.random.dirichlet(alpha)  #vector de probabilidades (las entradas suman 1)
+    #Construimos la suma ponderada de permutaciones
+    x =pesos[0]* v
+    for i in range(1,n_q):
+        vp = np.array(permutar_vector(v, i-1,i, n_q))
+        x += pesos[i] * vp
+    return x
 
-# Loop over time steps and randomness values
-for t in [1,30,60]:
-    plt.figure(figsize=(8, 4))
-    for P in [0,0.5,1]:
-        plot_prob(t, P)
-    
-    plt.xlabel("Position")
-    plt.ylabel("Probability")
-    plt.title(f"Quantum Walk Distribution at t = {t} for Various P")
-    plt.grid(True)
+def Prob_fuzzy(t: int, pesos)-> np.ndarray:
+    psi = Psi(t)
+    #Distribución normal
+    c0 = psi[0::2]
+    c1 = psi[1::2]
+    probs = np.abs(c0)**2 + np.abs(c1)**2
+
+    return Switch(probs, pesos)
+
+"Gráficas"
+
+#Distribución de Probabilidad
+def plot_prob_fuzzy(t: int):
+    pos = np.arange(L)
+    p   = Prob_fuzzy(t)
+    plt.plot(pos, p, label=f"t = {t}")
+
+coleccion_pesos = {
+    "P=0": [1,    0,    0,    0,    0,    0],
+    "P=0.2": [0.8,0.04,0.04,0.04,0.04,0.04],
+    "P=0.5": [0.5,0.1,0.1,0.1,0.1,0.1],
+    "P=1": [0,0.2,0.2,0.2,0.2,0.2]
+}
+
+# Función de plotting comparativo
+def plot_comparison(t: int, coleccion_pesos: dict):
+    pos = np.arange(L)
+    plt.figure(figsize=(8,4))
+    for etiqueta, pw in coleccion_pesos.items():
+        p = Prob_fuzzy(t, pw)
+        plt.plot(pos, p, label=etiqueta)
+    plt.xlabel("Posición")
+    plt.ylabel("Probabilidad")
+    plt.title(f"Distribución de Probilidad de la Caminata Fuzzy al tiempo t = {t} para varias P")
     plt.legend()
     plt.tight_layout()
     plt.show()
+
+# Genera la comparación en varios instantes
+for t in [0,1,10,50,100]:
+    plot_comparison(t, coleccion_pesos)
+
+for t in [0,1,10,50,100]:
+    print(sum(Prob_fuzzy(t,[0,0.2,0.2,0.2,0.2,0.2])))
