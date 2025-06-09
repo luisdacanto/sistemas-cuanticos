@@ -59,7 +59,7 @@ def prob(t,P):
     psi_sw = np.array(permutar_vector(p_original, 0, 1, n_q), dtype=complex)
     c0_sw = psi_sw[0::2]
     c1_sw = psi_sw[1::2]
-    probs_sw = np.array(permutar_vector(p_original, 4, 5, n_q), dtype=float) #np.abs(c0_sw)**2 + np.abs(c1_sw)**2
+    probs_sw = np.array(permutar_vector(p_original, 0, 1, n_q), dtype=float) #np.abs(c0_sw)**2 + np.abs(c1_sw)**2
 
     return (1-P)*p_original+(P)*probs_sw
 

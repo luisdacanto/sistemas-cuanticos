@@ -39,8 +39,8 @@ def permutar_vector(vector: list, i: int, j: int, width: int) -> list:
 
 def Psi(t): #evolución temporal
     p_i=np.zeros(L,dtype=complex)
-    p_i[0]=1/np.sqrt(2)
-    p_i[L//2]=1/np.sqrt(2) #posición inicial |1>
+    p_i[0]=1
+    #p_i[L//2]=1/np.sqrt(2) #posición inicial |1>
     c_i=np.array([1,0j]) #estado moneda
     psi=np.kron(p_i,c_i) #estado inicial
     for _ in range (1,t+1):
